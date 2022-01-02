@@ -24,7 +24,7 @@ def naiveBayes(X_train, X_test, y_train, y_test):
 
 def knn(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
-    for k in range(1, 100):  # Tested in range(1, 100)  and 7 was highest accuracy
+    for k in range(7, 8):  # Tested in range(1, 100)  and 7 was highest accuracy
         clf = KNeighborsClassifier(n_neighbors=k)
         acc_list_temp = crossValidate(X_train, y_train, clf)
         if acc_list_temp[1] > hyperParam[2]:
@@ -37,8 +37,7 @@ def knn(X_train, X_test, y_train, y_test):
 
 def adaBoost(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
-    for n in range(1, 100):  # Tested in range(1, 100)  and 7 was highest accuracy
-        print(n)
+    for n in range(94, 95):  # Tested in range(1, 100)  and 94 was highest accuracy
         clf = AdaBoostClassifier(n_estimators=n)
         acc_list_temp = crossValidate(X_train, y_train, clf)
         if acc_list_temp[1] > hyperParam[2]:
@@ -51,11 +50,11 @@ def adaBoost(X_train, X_test, y_train, y_test):
 
 def randomForest(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
-    for d in range(1, 100):  # Tested in range(1, 100)  and 7 was highest accuracy
-        clf = RandomForestClassifier(max_depth=d)
+    for n in range(37, 38):  # Tested in range(1, 100)  and 37 was highest accuracy
+        clf = RandomForestClassifier(n_estimators=n, max_depth=3)
         acc_list_temp = crossValidate(X_train, y_train, clf)
         if acc_list_temp[1] > hyperParam[2]:
-            hyperParam = [d, acc_list_temp[0], acc_list_temp[1]]
+            hyperParam = [n, acc_list_temp[0], acc_list_temp[1]]
     print(hyperParam)
     clf = RandomForestClassifier(max_depth=hyperParam[0])
     clf.fit(X_train, y_train)
@@ -98,4 +97,5 @@ X_train, X_test, y_train, y_test = split(dataFrame)
 # decisionTree(X_train, X_test, y_train, y_test)
 # naiveBayes(X_train, X_test, y_train, y_test)
 # knn(X_train, X_test, y_train, y_test)
-adaBoost(X_train, X_test, y_train, y_test)
+# adaBoost(X_train, X_test, y_train, y_test)
+randomForest(X_train, X_test, y_train, y_test)
