@@ -1,25 +1,23 @@
-import numpy as np
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import KFold
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.ensemble import RandomForestClassifier
 
-from dataFunctions import readCsv, split
+from dataFunctions import readCsv, split, crossValidate
 
 
 def decisionTree(X_train, X_test, y_train, y_test):
     clf = DecisionTreeClassifier().fit(X_train, y_train)
     y_predict = clf.predict(X_test)
-    cal_accuracy(y_test, y_predict)
+    reportClassifier(y_test, y_predict)
 
 
 def naiveBayes(X_train, X_test, y_train, y_test):
     clf = GaussianNB().fit(X_train, y_train)
     y_predict = clf.predict(X_test)
-    cal_accuracy(y_test, y_predict)
+    reportClassifier(y_test, y_predict)
 
 
 def knn(X_train, X_test, y_train, y_test):
@@ -33,7 +31,8 @@ def knn(X_train, X_test, y_train, y_test):
     clf = KNeighborsClassifier(n_neighbors=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
-    cal_accuracy(y_test, y_predict)
+    reportClassifier(y_test, y_predict)
+
 
 def adaBoost(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
@@ -46,7 +45,8 @@ def adaBoost(X_train, X_test, y_train, y_test):
     clf = AdaBoostClassifier(n_estimators=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
-    cal_accuracy(y_test, y_predict)
+    reportClassifier(y_test, y_predict)
+
 
 def randomForest(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
@@ -59,31 +59,13 @@ def randomForest(X_train, X_test, y_train, y_test):
     clf = RandomForestClassifier(max_depth=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
-    cal_accuracy(y_test, y_predict)
-
-def crossValidate(X_train, y_train, classifier):
-    acc_list = [0, 0]
-    X_train = np.array(X_train)
-    y_train = np.array(y_train)
-    for fold in range(19, 20):  # Tested in range(1, 100)  and 19 was highest accuracy
-        kf = KFold(n_splits=fold)
-        kf.get_n_splits(X_train)
-        acc = 0
-        counter = 0
-        for train_index, test_index in kf.split(X_train):
-            KFX_train, KFX_test = X_train[train_index], X_train[test_index]
-            KFy_train, KFy_test = y_train[train_index], y_train[test_index]
-            classifier.fit(KFX_train, np.ravel(KFy_train, order='C'))
-            KFy_predict = classifier.predict(KFX_test)
-            acc += accuracy_score(KFy_test, KFy_predict) * 100
-            counter += 1
-        acc = acc / counter
-        if acc > acc_list[1]:
-            acc_list = [fold, acc]
-    return acc_list
+    reportClassifier(y_test, y_predict)
 
 
-def cal_accuracy(y_test, y_pred):
+
+
+
+def reportClassifier(y_test, y_pred):
     TG, FG = confusion_matrix(y_test, y_pred)[0]
     FH, TH = confusion_matrix(y_test, y_pred)[1]
     print("Confusion Matrix:\n")
@@ -92,10 +74,9 @@ def cal_accuracy(y_test, y_pred):
     print(f"Report: {classification_report(y_test, y_pred)}\n", )
 
 
-dataFrame = readCsv()
-X_train, X_test, y_train, y_test = split(dataFrame)
-# decisionTree(X_train, X_test, y_train, y_test)
-# naiveBayes(X_train, X_test, y_train, y_test)
-# knn(X_train, X_test, y_train, y_test)
-# adaBoost(X_train, X_test, y_train, y_test)
-randomForest(X_train, X_test, y_train, y_test)
+def classify():
+    dataFrame = readCsv()
+    X_train, X_test, y_train, y_test = split(dataFrame)
+    classifiers = [decisionTree, naiveBayes, knn, adaBoost, randomForest]
+    for classifier in classifiers:
+        classifier(X_train, X_test, y_train, y_test)
