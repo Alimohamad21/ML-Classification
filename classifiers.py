@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
@@ -15,7 +16,7 @@ def decisionTree(X_train, X_test, y_train, y_test):
 
 
 def naiveBayes(X_train, X_test, y_train, y_test):
-    clf = GaussianNB().fit(X_train, y_train)
+    clf = GaussianNB().fit(X_train, np.ravel(y_train, order='C'))
     y_predict = clf.predict(X_test)
     reportClassifier(y_test, y_predict)
 
@@ -27,7 +28,6 @@ def knn(X_train, X_test, y_train, y_test):
         acc_list_temp = crossValidate(X_train, y_train, clf)
         if acc_list_temp[1] > hyperParam[2]:
             hyperParam = [k, acc_list_temp[0], acc_list_temp[1]]
-    print(hyperParam)
     clf = KNeighborsClassifier(n_neighbors=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
@@ -41,7 +41,6 @@ def adaBoost(X_train, X_test, y_train, y_test):
         acc_list_temp = crossValidate(X_train, y_train, clf)
         if acc_list_temp[1] > hyperParam[2]:
             hyperParam = [n, acc_list_temp[0], acc_list_temp[1]]
-    print(hyperParam)
     clf = AdaBoostClassifier(n_estimators=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
@@ -55,14 +54,10 @@ def randomForest(X_train, X_test, y_train, y_test):
         acc_list_temp = crossValidate(X_train, y_train, clf)
         if acc_list_temp[1] > hyperParam[2]:
             hyperParam = [n, acc_list_temp[0], acc_list_temp[1]]
-    print(hyperParam)
     clf = RandomForestClassifier(max_depth=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
     reportClassifier(y_test, y_predict)
-
-
-
 
 
 def reportClassifier(y_test, y_pred):
@@ -71,12 +66,16 @@ def reportClassifier(y_test, y_pred):
     print("Confusion Matrix:\n")
     print(f'TG:{TG}\tFG:{FG}\nFH:{FH}\tTH:{TH}\n')
     print(f"Accuracy: {accuracy_score(y_test, y_pred) * 100}\n")
-    print(f"Report: {classification_report(y_test, y_pred)}\n", )
+    print('Report:')
+    print(f"{classification_report(y_test, y_pred)}\n", )
 
 
 def classify():
     dataFrame = readCsv()
     X_train, X_test, y_train, y_test = split(dataFrame)
-    classifiers = [decisionTree, naiveBayes, knn, adaBoost, randomForest]
-    for classifier in classifiers:
+    y_train = np.ravel(y_train, order='C')  # to avoid warnings
+    classifiers = {'DECISION TREE': decisionTree, 'NAIVE BAYES': naiveBayes, 'KNN': knn, 'ADABOOST': adaBoost,
+                   'RANDOM FOREST': randomForest}
+    for classifierName, classifier in classifiers.items():
+        print(f'*************************** CLASSIFICATION USING {classifierName} ***************************\n\n')
         classifier(X_train, X_test, y_train, y_test)

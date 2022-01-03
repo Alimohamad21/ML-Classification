@@ -28,7 +28,7 @@ def crossValidate(X_train, y_train, classifier):
         for train_index, test_index in kf.split(X_train):
             KFX_train, KFX_test = X_train[train_index], X_train[test_index]
             KFy_train, KFy_test = y_train[train_index], y_train[test_index]
-            classifier.fit(KFX_train, np.ravel(KFy_train, order='C'))
+            classifier.fit(KFX_train, KFy_train)
             KFy_predict = classifier.predict(KFX_test)
             acc += accuracy_score(KFy_test, KFy_predict) * 100
             counter += 1
