@@ -16,7 +16,7 @@ def decisionTree(X_train, X_test, y_train, y_test):
 
 
 def naiveBayes(X_train, X_test, y_train, y_test):
-    clf = GaussianNB().fit(X_train, np.ravel(y_train, order='C'))
+    clf = GaussianNB().fit(X_train, y_train)
     y_predict = clf.predict(X_test)
     reportClassifier(y_test, y_predict)
 
