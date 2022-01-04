@@ -5,6 +5,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
+from matplotlib import pyplot
 
 from dataFunctions import readCsv, split, crossValidate
 
@@ -23,11 +24,19 @@ def naiveBayes(X_train, X_test, y_train, y_test):
 
 def knn(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
-    for k in range(7, 8):  # Tested in range(1, 100)  and 7 was highest accuracy
+    # acc_data = []
+    for k in range(7,8):  # Tested in range(1, 200)  and 7 was highest accuracy
         clf = KNeighborsClassifier(n_neighbors=k)
         acc_list_temp = crossValidate(X_train, y_train, clf)
+        # acc_data.append(acc_list_temp[1])
         if acc_list_temp[1] > hyperParam[2]:
             hyperParam = [k, acc_list_temp[0], acc_list_temp[1]]
+    # pyplot.plot(range(5, 205, 5), acc_data)
+    # pyplot.title('KNN with K Tuned')
+    # pyplot.xlabel("K")
+    # pyplot.ylabel("Accuracy")
+    # pyplot.show()
+    # print(f'Best k = {hyperParam[0]} with best accuracy = {hyperParam[2]}')
     clf = KNeighborsClassifier(n_neighbors=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
@@ -36,11 +45,19 @@ def knn(X_train, X_test, y_train, y_test):
 
 def adaBoost(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
-    for n in range(94, 95):  # Tested in range(1, 100)  and 94 was highest accuracy
+    # acc_data = []
+    for n in range(165, 166):  # Tested in range(1, 200)  and 165 was highest accuracy
         clf = AdaBoostClassifier(n_estimators=n)
         acc_list_temp = crossValidate(X_train, y_train, clf)
+        # acc_data.append(acc_list_temp[1])
         if acc_list_temp[1] > hyperParam[2]:
             hyperParam = [n, acc_list_temp[0], acc_list_temp[1]]
+    # pyplot.plot(range(5, 205, 5), acc_data)
+    # pyplot.title('Adaboost with n-estimators')
+    # pyplot.xlabel("n estimators")
+    # pyplot.ylabel("Accuracy")
+    # pyplot.show()
+    # print(f'Best n = {hyperParam[0]} with best accuracy = {hyperParam[2]}')
     clf = AdaBoostClassifier(n_estimators=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
@@ -49,11 +66,19 @@ def adaBoost(X_train, X_test, y_train, y_test):
 
 def randomForest(X_train, X_test, y_train, y_test):
     hyperParam = [1, 1, 0]
-    for n in range(37, 38):  # Tested in range(1, 100)  and 37 was highest accuracy
+    # acc_data = []
+    for n in range(75, 76):  # Tested in range(1, 200)  and 75 was highest accuracy
         clf = RandomForestClassifier(n_estimators=n, max_depth=3)
         acc_list_temp = crossValidate(X_train, y_train, clf)
+        # acc_data.append(acc_list_temp[1])
         if acc_list_temp[1] > hyperParam[2]:
             hyperParam = [n, acc_list_temp[0], acc_list_temp[1]]
+    # pyplot.plot(range(5, 205, 5), acc_data)
+    # pyplot.title('Random Forest with n-estimators')
+    # pyplot.xlabel("n estimators")
+    # pyplot.ylabel("Accuracy")
+    # pyplot.show()
+    # print(f'Best n = {hyperParam[0]} with best accuracy = {hyperParam[2]}')
     clf = RandomForestClassifier(max_depth=hyperParam[0])
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)

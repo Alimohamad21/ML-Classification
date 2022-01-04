@@ -20,7 +20,7 @@ def crossValidate(X_train, y_train, classifier):
     acc_list = [0, 0]
     X_train = np.array(X_train)
     y_train = np.array(y_train)
-    for fold in range(19, 20):  # Tested in range(1, 100)  and 19 was highest accuracy
+    for fold in range(19, 20):  # Tested in range(2, 100)  and 19 was highest accuracy
         kf = KFold(n_splits=fold)
         kf.get_n_splits(X_train)
         acc = 0
