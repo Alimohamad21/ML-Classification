@@ -98,6 +98,8 @@ def reportClassifier(y_test, y_pred):
 def classify():
     dataFrame = readCsv()
     X_train, X_test, y_train, y_test = split(dataFrame)
+    print(f'AFTER SPLITTING:\nBALANCE CHECK FOR TRAIN:\n{y_train.value_counts()}\n\n')
+    print(f'BALANCE CHECK FOR TEST:\n{y_test.value_counts()}\n\n')
     y_train = np.ravel(y_train, order='C')  # to avoid warnings
     classifiers = {'DECISION TREE': decisionTree, 'NAIVE BAYES': naiveBayes, 'KNN': knn, 'ADABOOST': adaBoost,
                    'RANDOM FOREST': randomForest}

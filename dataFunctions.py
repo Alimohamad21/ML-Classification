@@ -20,6 +20,7 @@ def crossValidate(X_train, y_train, classifier):
     acc_list = [0, 0]
     X_train = np.array(X_train)
     y_train = np.array(y_train)
+    print('IN CROSS VALIDATION:\n\n')
     for fold in range(19, 20):  # Tested in range(2, 100)  and 19 was highest accuracy
         kf = KFold(n_splits=fold)
         kf.get_n_splits(X_train)
@@ -28,6 +29,10 @@ def crossValidate(X_train, y_train, classifier):
         for train_index, test_index in kf.split(X_train):
             KFX_train, KFX_test = X_train[train_index], X_train[test_index]
             KFy_train, KFy_test = y_train[train_index], y_train[test_index]
+            print(f'BALANCE CHECK FOR TRAIN:\n')
+            countLabels(KFy_train)
+            print(f'BALANCE CHECK FOR TEST:\n')
+            countLabels(KFy_test)
             classifier.fit(KFX_train, KFy_train)
             KFy_predict = classifier.predict(KFX_test)
             acc += accuracy_score(KFy_test, KFy_predict) * 100
@@ -36,3 +41,11 @@ def crossValidate(X_train, y_train, classifier):
         if acc > acc_list[1]:
             acc_list = [fold, acc]
     return acc_list
+
+
+def countLabels(y):
+    labelCount = {'g': 0, 'h': 0}
+    for label in y:
+        labelCount[label] += 1
+    print(f"g:{labelCount['g']}")
+    print(f"h:{labelCount['h']}\n\n")
